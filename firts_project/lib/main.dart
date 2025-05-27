@@ -1,61 +1,79 @@
 import 'package:flutter/material.dart';
+import './questionario.dart';
+import './resultado.dart';
 
 void main() => runApp(const PerguntaApp());
 
+class _PerguntaAppState extends State<PerguntaApp> {
+  var _perguntaSelecionada = 0;
+  var _pontuacaoTotal = 0;
+  final _perguntas = const [
+    {
+      'texto': 'Qual é a sua cor favorita?',
+      'respostas': [
+        {'texto': 'Preto', 'pontuacao': 10},
+        {'texto': 'Vermelho', 'pontuacao': 5},
+        {'texto': 'Verde', 'pontuacao': 3},
+        {'texto': 'Branco', 'pontuacao': 1},
+      ],
+    },
+    {
+      'texto': 'Qual é o seu animal favorito?',
+      'respostas': [
+        {'texto': 'Coelho', 'pontuacao': 10},
+        {'texto': 'Cobra', 'pontuacao': 5},
+        {'texto': 'Elefante', 'pontuacao': 3},
+        {'texto': 'Leão', 'pontuacao': 1},
+      ],
+    },
+    {
+      'texto': 'Qual é o seu instrutor favorito?',
+      'respostas': [
+        {'texto': 'Leo', 'pontuacao': 10},
+        {'texto': 'Maria', 'pontuacao': 5},
+        {'texto': 'João', 'pontuacao': 3},
+        {'texto': 'Pedro', 'pontuacao': 1},
+      ],
+    },
+  ];
 
-class PerguntaAppState extends State<PerguntaApp>{
-  var perguntaSelecionada = 0;
-
-  void responder(){
+  void _responder(int pontuacao) {
+    if (temPerguntaSelecionada) {
       setState(() {
-        perguntaSelecionada++;
+        _perguntaSelecionada++;
+        _pontuacaoTotal += pontuacao;
       });
-      print("Pergunta foi respondida $perguntaSelecionada");
     }
 
+    print(_pontuacaoTotal);
+  }
+
+  bool get temPerguntaSelecionada {
+    return _perguntaSelecionada < _perguntas.length;
+  }
 
   @override
-  Widget build(BuildContext context)
-  {
-    final perguntas = ['Qual o seu time?', 'Qual sua cor favorita'];
-
+  Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 78, 81, 255),
-          title: Text(
-            "Ola mundo",
-          ),     
-        ),
-        body: Column(
-          children: <Widget>[
-            Text(perguntas[perguntaSelecionada]),
-            ElevatedButton(
-              child: Text("Botafogo"),
-              onPressed: responder,
-            ),
-            ElevatedButton(
-              child: Text("Vasco"),
-              onPressed: responder,
-            ),
-            ElevatedButton(
-              child: Text("Fluminense"),
-              onPressed: responder,
-            ),
-          ],
-        ),
-      )
+        appBar: AppBar(title: const Text('Perguntas')),
+        body: temPerguntaSelecionada
+            ? Questionario(
+                perguntas: _perguntas,
+                perguntaSelecionada: _perguntaSelecionada,
+                quandoResponder: _responder,
+              )
+            : const Resultado(),
+      ),
     );
-  
   }
 }
 
-
-
-class PerguntaApp extends StatefulWidget{
+class PerguntaApp extends StatefulWidget {
   const PerguntaApp({super.key});
+
   @override
-  PerguntaAppState createState(){
-    return PerguntaAppState();
+  _PerguntaAppState createState() {
+    return _PerguntaAppState();
   }
 }
