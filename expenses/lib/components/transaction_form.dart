@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
-class TransactionForm extends StatelessWidget {
-  final textController = TextEditingController();
-  final valorController = TextEditingController();
-  void Function(String title, double value) OnSubmit;
+class TransactionForm extends StatefulWidget {
+  final void Function(String title, double value) OnSubmit;
   TransactionForm(this.OnSubmit, {super.key});
+
+  @override
+  State<TransactionForm> createState() => _TransactionFormState();
+}
+
+class _TransactionFormState extends State<TransactionForm> {
+  final textController = TextEditingController();
+
+  final valorController = TextEditingController();
 
   _submitForm() {
     final titulo = textController.text;
@@ -14,7 +21,7 @@ class TransactionForm extends StatelessWidget {
       print('Valores invalidos');
       return;
     }
-    OnSubmit(titulo, valor);
+    widget.OnSubmit(titulo, valor);
   }
 
   @override

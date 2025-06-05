@@ -12,16 +12,46 @@ void main() {
 }
 
 class ExpensessApp extends StatelessWidget {
-  const ExpensessApp({super.key});
+  ExpensessApp({super.key});
+  final ThemeData tema = ThemeData();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: MyHomePage());
+    return MaterialApp(
+      home: const MyHomePage(),
+      theme: ThemeData(
+        useMaterial3: false,
+        fontFamily: 'QuickSand',
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.purple,
+          foregroundColor: Colors.white,
+        ),
+        textTheme: ThemeData.light().textTheme.copyWith(
+          titleLarge: TextStyle(
+            fontFamily: 'OpenSans',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+          titleMedium: TextStyle(
+            fontFamily: 'OpenSans',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.amber,
+          primary: Colors.purple,
+          secondary: Colors.amber,
+        ),
+      ),
+    );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({super.key});
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -29,8 +59,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transacoes = [
-    Transaction(id: 't1', title: "Titulo1", valor: 100.0, date: DateTime.now()),
-    Transaction(id: 't2', title: "Titulo2", valor: 50, date: DateTime.now()),
+    // Transaction(id: 't1', title: "Titulo1", valor: 100.0, date: DateTime.now()),
+    // Transaction(id: 't2', title: "Titulo2", valor: 50, date: DateTime.now()),
   ];
 
   _addTransaction(String title, double value) {
@@ -43,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _transacoes.add(newTransaction);
     });
+    Navigator.of(context).pop();
   }
 
   _showFormInput(BuildContext context) {
@@ -56,36 +87,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Despesas Pessoais",
-            style: TextStyle(color: Colors.white),
-          ),
-          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.add))],
-          backgroundColor: Colors.blue,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Despesas Pessoais",
+          style: Theme.of(context).textTheme.titleLarge,
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                child: Card(
-                  color: Colors.blue,
-                  elevation: 5,
-                  child: Text("Grafico"),
-                ),
+        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.add))],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              child: Card(
+                color: Colors.blue,
+                elevation: 5,
+                child: Text("Grafico"),
               ),
+            ),
 
-              TransactionList(_transacoes),
-            ],
-          ),
+            TransactionList(_transacoes),
+          ],
         ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () => _showFormInput(context),
-        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => _showFormInput(context),
       ),
     );
   }

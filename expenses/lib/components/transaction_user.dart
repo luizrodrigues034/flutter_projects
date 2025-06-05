@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../Models/transaction.dart';
 
 class TransactionUser extends StatefulWidget {
-  TransactionUser({super.key});
+  const TransactionUser({super.key});
 
   @override
   State<TransactionUser> createState() => _TransactionUserState();
