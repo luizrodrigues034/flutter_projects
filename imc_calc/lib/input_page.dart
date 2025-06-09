@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:imc_calc/constanst.dart';
+import 'package:imc_calc/gender_propeties.dart';
+import 'package:imc_calc/reusable_card.dart';
 
-const Color colorCard = Color(0xFF1D1E33);
-const bottomContainerColour = Color(0xFFEB1555);
-const double heigthBottom = 80;
-const double iconCardSize = 80;
+enum Gender { male, female }
 
 class InputPage extends StatefulWidget {
   const InputPage({super.key});
@@ -14,53 +16,167 @@ class InputPage extends StatefulWidget {
 }
 
 class _InputPageState extends State<InputPage> {
+  Gender? selectGender;
+  double heigthPeaple = 100;
+  int age = 18;
+
+  void setMan() {
+    setState(() {
+      selectGender = Gender.male;
+    });
+  }
+
+  void setFemale() {
+    setState(() {
+      selectGender = Gender.female;
+    });
+  }
+
+  Timer? _timer;
+
+  void _startIncrement() {
+    // setState(() => age++);
+
+    _timer = Timer.periodic(Duration(milliseconds: 100), (_) {
+      setState(() => age = age + 1);
+    });
+  }
+
+  void _stopIncrement() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Imc Calculator")),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
             child: Row(
               children: [
                 Expanded(
                   child: ReusableCard(
-                    selectColor: colorCard,
+                    selectColor: selectGender == Gender.male
+                        ? kBottomContainerColour
+                        : kInactiveCardColor,
                     chieldContent: GenderProeperties(
                       icone: FontAwesomeIcons.mars,
-                      genero: 'MALE',
+                      label: 'MALE',
                     ),
+                    setGender: setMan,
                   ),
                 ),
                 Expanded(
                   child: ReusableCard(
-                    selectColor: colorCard,
+                    selectColor: selectGender == Gender.female
+                        ? kBottomContainerColour
+                        : kInactiveCardColor,
                     chieldContent: GenderProeperties(
                       icone: FontAwesomeIcons.venus,
-                      genero: 'FEMALE',
+                      label: 'FEMALE',
                     ),
+                    setGender: setFemale,
                   ),
                 ),
               ],
             ),
           ),
-          Expanded(child: ReusableCard(selectColor: colorCard)),
+          Expanded(
+            child: ReusableCard(
+              selectColor: kActiveCardColor,
+              chieldContent: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('HEIGHT'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.ideographic,
+                    children: [
+                      Text(
+                        heigthPeaple.toStringAsFixed(0),
+                        style: kNumberStyle,
+                      ),
+                      Text('cm', style: kLabelTextStyle),
+                    ],
+                  ),
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      thumbColor: kBottomContainerColour,
+                      activeTrackColor: Colors.white,
+                      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15),
+                      overlayShape: RoundSliderOverlayShape(overlayRadius: 30),
+                      overlayColor: Color(0x29EB1555),
+                    ),
+                    child: Slider(
+                      inactiveColor: const Color.fromARGB(122, 197, 197, 197),
+                      value: heigthPeaple,
+                      onChanged: (newRating) => setState(() {
+                        heigthPeaple = newRating;
+                      }),
+                      max: 250,
+                      min: 100,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Expanded(
             child: Row(
               children: [
-                Expanded(child: ReusableCard(selectColor: colorCard)),
-                Expanded(child: ReusableCard(selectColor: colorCard)),
+                Expanded(
+                  child: ReusableCard(
+                    selectColor: kActiveCardColor,
+                    chieldContent: Column(
+                      children: [
+                        Text('Age', style: kLabelTextStyle),
+                        Text(age.toString(), style: kNumberStyle),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+
+                          children: [
+                            _AnimetedButton(
+                              onPressed: () {
+                                setState(() {
+                                  age--;
+                                });
+                              },
+                              label: '',
+                              icon: FontAwesomeIcons.minus,
+                            ),
+                            _AnimetedButton(
+                              onPressed: () {
+                                setState(() {
+                                  age++;
+                                });
+                              },
+                              onTapPush: _startIncrement,
+                              stopIncrement: _stopIncrement,
+                              label: '',
+                              icon: FontAwesomeIcons.plus,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(child: ReusableCard(selectColor: kActiveCardColor)),
               ],
             ),
           ),
           Container(
             width: double.infinity,
             margin: EdgeInsets.only(top: 10),
-            height: heigthBottom,
-            color: bottomContainerColour,
+            height: kHeigthBottom,
+            color: kBottomContainerColour,
             child: Center(
               child: Text(
-                'RESULTADO',
+                'Calculate',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
               ),
@@ -72,44 +188,74 @@ class _InputPageState extends State<InputPage> {
   }
 }
 
-class GenderProeperties extends StatelessWidget {
-  final IconData icone;
-  final String genero;
-  const GenderProeperties({required this.icone, required this.genero});
+class _AnimetedButton extends StatefulWidget {
+  final String label;
+  final VoidCallback onPressed;
+  final IconData icon;
+  final onTapPush;
+  final stopIncrement;
+  const _AnimetedButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    required this.icon,
+    this.onTapPush,
+    this.stopIncrement,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icone, size: iconCardSize),
-        SizedBox(height: 15),
-        Text(
-          genero,
-          style: TextStyle(
-            fontSize: 18,
-            color: Color.fromARGB(145, 248, 216, 233),
-          ),
-        ),
-      ],
-    );
-  }
+  State<_AnimetedButton> createState() => __AnimetedButtonState();
 }
 
-class ReusableCard extends StatelessWidget {
-  const ReusableCard({required this.selectColor, this.chieldContent});
+class __AnimetedButtonState extends State<_AnimetedButton> {
+  double _scale = 1.0;
+  Timer? _holdTimer;
+  bool _holding = false;
 
-  final Color selectColor;
-  final Widget? chieldContent;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: selectColor,
-        borderRadius: BorderRadius.circular(10),
+    return GestureDetector(
+      onTapDown: (_) {
+        setState(() => _scale = 0.80);
+
+        _holding = false;
+
+        _holdTimer = Timer(Duration(milliseconds: 300), () {
+          _holding = true;
+          widget.onTapPush?.call();
+        });
+      },
+      onTapUp: (_) {
+        setState(() => _scale = 1.0);
+
+        _holdTimer?.cancel();
+
+        if (!_holding) {
+          widget.onPressed();
+        }
+
+        widget.stopIncrement?.call();
+      },
+      onTapCancel: () {
+        setState(() => _scale = 1.0);
+
+        _holdTimer?.cancel();
+        widget.stopIncrement?.call();
+      },
+      child: AnimatedScale(
+        scale: _scale,
+        duration: Duration(milliseconds: 100),
+        curve: Curves.easeOut,
+        child: OutlinedButton(
+          onPressed: null,
+          style: OutlinedButton.styleFrom(
+            backgroundColor: kBottomContainerColour,
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: CircleBorder(),
+          ),
+          child: Icon(widget.icon, color: Colors.white, size: 40, weight: 1000),
+        ),
       ),
-      child: chieldContent,
     );
   }
 }
