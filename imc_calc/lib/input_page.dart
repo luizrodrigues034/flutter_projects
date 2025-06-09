@@ -18,7 +18,7 @@ class InputPage extends StatefulWidget {
 class _InputPageState extends State<InputPage> {
   Gender? selectGender;
   double heigthPeaple = 100;
-  int age = 18;
+  int wheight = 0;
 
   void setMan() {
     setState(() {
@@ -38,13 +38,21 @@ class _InputPageState extends State<InputPage> {
     // setState(() => age++);
 
     _timer = Timer.periodic(Duration(milliseconds: 100), (_) {
-      setState(() => age = age + 1);
+      setState(() => wheight = wheight + 1);
     });
   }
 
-  void _stopIncrement() {
+  void _stopCrement() {
     _timer?.cancel();
     _timer = null;
+  }
+
+  void _startDecrement() {
+    _timer = Timer.periodic(Duration(milliseconds: 100), (_) {
+      setState(() {
+        wheight--;
+      });
+    });
   }
 
   @override
@@ -133,8 +141,8 @@ class _InputPageState extends State<InputPage> {
                     selectColor: kActiveCardColor,
                     chieldContent: Column(
                       children: [
-                        Text('Age', style: kLabelTextStyle),
-                        Text(age.toString(), style: kNumberStyle),
+                        Text('WEIGHT', style: kLabelTextStyle),
+                        Text(wheight.toString(), style: kNumberStyle),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
 
@@ -142,20 +150,22 @@ class _InputPageState extends State<InputPage> {
                             _AnimetedButton(
                               onPressed: () {
                                 setState(() {
-                                  age--;
+                                  wheight--;
                                 });
                               },
+                              stopIncrement: _stopCrement,
+                              onTapPush: _startDecrement,
                               label: '',
                               icon: FontAwesomeIcons.minus,
                             ),
                             _AnimetedButton(
                               onPressed: () {
                                 setState(() {
-                                  age++;
+                                  wheight++;
                                 });
                               },
                               onTapPush: _startIncrement,
-                              stopIncrement: _stopIncrement,
+                              stopIncrement: _stopCrement,
                               label: '',
                               icon: FontAwesomeIcons.plus,
                             ),
