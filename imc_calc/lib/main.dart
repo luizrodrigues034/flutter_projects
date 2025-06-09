@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imc_calc/input_page.dart';
+import 'package:imc_calc/result_page.dart';
 
 void main() {
   runApp(
@@ -11,20 +12,11 @@ void main() {
         ),
         scaffoldBackgroundColor: Color(0xFF0C101F),
       ),
-      home: CardGender(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => InputPage(),
+        'result': (context) => ResultPage(),
+      },
     ),
   );
-}
-
-class CardGender extends StatefulWidget {
-  const CardGender({super.key});
-  @override
-  State<CardGender> createState() => _CardGenderState();
-}
-
-class _CardGenderState extends State<CardGender> {
-  @override
-  Widget build(BuildContext context) {
-    return InputPage();
-  }
 }

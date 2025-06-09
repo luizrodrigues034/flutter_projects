@@ -4,7 +4,11 @@ import 'package:imc_calc/constanst.dart';
 class GenderProeperties extends StatelessWidget {
   final IconData icone;
   final String label;
-  const GenderProeperties({required this.icone, required this.label});
+  const GenderProeperties({
+    super.key,
+    required this.icone,
+    required this.label,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:imc_calc/animeted_button.dart';
 import 'package:imc_calc/constanst.dart';
+import 'package:imc_calc/dto_imc_data.dart';
 import 'package:imc_calc/gender_propeties.dart';
 import 'package:imc_calc/reusable_card.dart';
 
@@ -18,7 +19,7 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   Gender? selectGender;
-  double heigthPeaple = 100;
+  int heigthPeaple = 100;
   int wheight = 0;
   int age = 18;
 
@@ -112,9 +113,9 @@ class _InputPageState extends State<InputPage> {
                     ),
                     child: Slider(
                       inactiveColor: const Color.fromARGB(122, 197, 197, 197),
-                      value: heigthPeaple,
+                      value: heigthPeaple.toDouble(),
                       onChanged: (newRating) => setState(() {
-                        heigthPeaple = newRating;
+                        heigthPeaple = newRating.toInt();
                       }),
                       max: 250,
                       min: 100,
@@ -138,27 +139,31 @@ class _InputPageState extends State<InputPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
 
                           children: [
-                            AnimetedButton(
-                              onPressed: () {
-                                setState(() {
-                                  wheight--;
-                                });
-                              },
-                              stopIncrement: _stopCrement,
-                              onTapPush: () => _startCrement(() => wheight--),
-                              label: '',
-                              icon: FontAwesomeIcons.minus,
+                            Expanded(
+                              child: AnimetedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    wheight--;
+                                  });
+                                },
+                                stopIncrement: _stopCrement,
+                                onTapPush: () => _startCrement(() => wheight--),
+                                label: '',
+                                icon: FontAwesomeIcons.minus,
+                              ),
                             ),
-                            AnimetedButton(
-                              onPressed: () {
-                                setState(() {
-                                  wheight++;
-                                });
-                              },
-                              onTapPush: () => _startCrement(() => wheight++),
-                              stopIncrement: _stopCrement,
-                              label: '',
-                              icon: FontAwesomeIcons.plus,
+                            Expanded(
+                              child: AnimetedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    wheight++;
+                                  });
+                                },
+                                onTapPush: () => _startCrement(() => wheight++),
+                                stopIncrement: _stopCrement,
+                                label: '',
+                                icon: FontAwesomeIcons.plus,
+                              ),
                             ),
                           ],
                         ),
@@ -177,27 +182,31 @@ class _InputPageState extends State<InputPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
 
                           children: [
-                            AnimetedButton(
-                              onPressed: () {
-                                setState(() {
-                                  age--;
-                                });
-                              },
-                              stopIncrement: _stopCrement,
-                              onTapPush: () => _startCrement(() => age--),
-                              label: '',
-                              icon: FontAwesomeIcons.minus,
+                            Expanded(
+                              child: AnimetedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    age--;
+                                  });
+                                },
+                                stopIncrement: _stopCrement,
+                                onTapPush: () => _startCrement(() => age--),
+                                label: '',
+                                icon: FontAwesomeIcons.minus,
+                              ),
                             ),
-                            AnimetedButton(
-                              onPressed: () {
-                                setState(() {
-                                  age++;
-                                });
-                              },
-                              onTapPush: () => _startCrement(() => age++),
-                              stopIncrement: _stopCrement,
-                              label: '',
-                              icon: FontAwesomeIcons.plus,
+                            Expanded(
+                              child: AnimetedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    age++;
+                                  });
+                                },
+                                onTapPush: () => _startCrement(() => age++),
+                                stopIncrement: _stopCrement,
+                                label: '',
+                                icon: FontAwesomeIcons.plus,
+                              ),
                             ),
                           ],
                         ),
@@ -208,16 +217,37 @@ class _InputPageState extends State<InputPage> {
               ],
             ),
           ),
-          Container(
-            width: double.infinity,
-            margin: EdgeInsets.only(top: 10),
-            height: kHeigthBottom,
-            color: kBottomContainerColour,
-            child: Center(
-              child: Text(
-                'Calculate',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          InkWell(
+            onTap: () {
+              if (selectGender != null &&
+                  heigthPeaple >= 100 &&
+                  wheight >= 20 &&
+                  age >= 18) {
+                setState(() {
+                  Navigator.pushNamed(
+                    context,
+                    'result',
+                    arguments: DtoImcData(
+                      gender: selectGender!,
+                      heigth: heigthPeaple,
+                      weight: wheight,
+                      age: age,
+                    ),
+                  );
+                });
+              }
+            },
+            child: Container(
+              width: double.infinity,
+              margin: EdgeInsets.only(top: 10),
+              height: kHeigthBottom,
+              color: kBottomContainerColour,
+              child: Center(
+                child: Text(
+                  'Calculate',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                ),
               ),
             ),
           ),
