@@ -7,8 +7,8 @@ class AnimetedButton extends StatefulWidget {
   final String label;
   final VoidCallback onPressed;
   final IconData icon;
-  final onTapPush;
-  final stopIncrement;
+  final VoidCallback? onTapPush;
+  final VoidCallback? stopIncrement;
   const AnimetedButton({
     super.key,
     required this.label,

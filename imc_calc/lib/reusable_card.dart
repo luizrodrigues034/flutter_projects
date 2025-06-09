@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 class ReusableCard extends StatelessWidget {
   const ReusableCard({
+    super.key,
     required this.selectColor,
     this.chieldContent,
     this.setGender,
   });
 
   final Color selectColor;
-  final setGender;
+  final VoidCallback? setGender;
   final Widget? chieldContent;
   @override
   Widget build(BuildContext context) {
