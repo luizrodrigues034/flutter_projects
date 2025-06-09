@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:imc_calc/animeted_button.dart';
 import 'package:imc_calc/constanst.dart';
 import 'package:imc_calc/gender_propeties.dart';
 import 'package:imc_calc/reusable_card.dart';
@@ -19,6 +20,7 @@ class _InputPageState extends State<InputPage> {
   Gender? selectGender;
   double heigthPeaple = 100;
   int wheight = 0;
+  int age = 18;
 
   void setMan() {
     setState(() {
@@ -33,26 +35,15 @@ class _InputPageState extends State<InputPage> {
   }
 
   Timer? _timer;
-
-  void _startIncrement() {
-    // setState(() => age++);
-
+  void _startCrement(VoidCallback crementFunction) {
     _timer = Timer.periodic(Duration(milliseconds: 100), (_) {
-      setState(() => wheight = wheight + 1);
+      setState(crementFunction);
     });
   }
 
   void _stopCrement() {
     _timer?.cancel();
     _timer = null;
-  }
-
-  void _startDecrement() {
-    _timer = Timer.periodic(Duration(milliseconds: 100), (_) {
-      setState(() {
-        wheight--;
-      });
-    });
   }
 
   @override
@@ -147,24 +138,24 @@ class _InputPageState extends State<InputPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
 
                           children: [
-                            _AnimetedButton(
+                            AnimetedButton(
                               onPressed: () {
                                 setState(() {
                                   wheight--;
                                 });
                               },
                               stopIncrement: _stopCrement,
-                              onTapPush: _startDecrement,
+                              onTapPush: () => _startCrement(() => wheight--),
                               label: '',
                               icon: FontAwesomeIcons.minus,
                             ),
-                            _AnimetedButton(
+                            AnimetedButton(
                               onPressed: () {
                                 setState(() {
                                   wheight++;
                                 });
                               },
-                              onTapPush: _startIncrement,
+                              onTapPush: () => _startCrement(() => wheight++),
                               stopIncrement: _stopCrement,
                               label: '',
                               icon: FontAwesomeIcons.plus,
@@ -175,7 +166,45 @@ class _InputPageState extends State<InputPage> {
                     ),
                   ),
                 ),
-                Expanded(child: ReusableCard(selectColor: kActiveCardColor)),
+                Expanded(
+                  child: ReusableCard(
+                    selectColor: kActiveCardColor,
+                    chieldContent: Column(
+                      children: [
+                        Text('AGE', style: kLabelTextStyle),
+                        Text(age.toString(), style: kNumberStyle),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+
+                          children: [
+                            AnimetedButton(
+                              onPressed: () {
+                                setState(() {
+                                  age--;
+                                });
+                              },
+                              stopIncrement: _stopCrement,
+                              onTapPush: () => _startCrement(() => age--),
+                              label: '',
+                              icon: FontAwesomeIcons.minus,
+                            ),
+                            AnimetedButton(
+                              onPressed: () {
+                                setState(() {
+                                  age++;
+                                });
+                              },
+                              onTapPush: () => _startCrement(() => age++),
+                              stopIncrement: _stopCrement,
+                              label: '',
+                              icon: FontAwesomeIcons.plus,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -193,78 +222,6 @@ class _InputPageState extends State<InputPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _AnimetedButton extends StatefulWidget {
-  final String label;
-  final VoidCallback onPressed;
-  final IconData icon;
-  final onTapPush;
-  final stopIncrement;
-  const _AnimetedButton({
-    super.key,
-    required this.label,
-    required this.onPressed,
-    required this.icon,
-    this.onTapPush,
-    this.stopIncrement,
-  });
-
-  @override
-  State<_AnimetedButton> createState() => __AnimetedButtonState();
-}
-
-class __AnimetedButtonState extends State<_AnimetedButton> {
-  double _scale = 1.0;
-  Timer? _holdTimer;
-  bool _holding = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) {
-        setState(() => _scale = 0.80);
-
-        _holding = false;
-
-        _holdTimer = Timer(Duration(milliseconds: 300), () {
-          _holding = true;
-          widget.onTapPush?.call();
-        });
-      },
-      onTapUp: (_) {
-        setState(() => _scale = 1.0);
-
-        _holdTimer?.cancel();
-
-        if (!_holding) {
-          widget.onPressed();
-        }
-
-        widget.stopIncrement?.call();
-      },
-      onTapCancel: () {
-        setState(() => _scale = 1.0);
-
-        _holdTimer?.cancel();
-        widget.stopIncrement?.call();
-      },
-      child: AnimatedScale(
-        scale: _scale,
-        duration: Duration(milliseconds: 100),
-        curve: Curves.easeOut,
-        child: OutlinedButton(
-          onPressed: null,
-          style: OutlinedButton.styleFrom(
-            backgroundColor: kBottomContainerColour,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: CircleBorder(),
-          ),
-          child: Icon(widget.icon, color: Colors.white, size: 40, weight: 1000),
-        ),
       ),
     );
   }
