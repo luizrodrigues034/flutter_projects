@@ -1,7 +1,11 @@
 import 'dart:convert';
 
+import 'package:clima_flutter/screens/location_screen.dart';
 import 'package:clima_flutter/services/location.dart';
+import 'package:clima_flutter/services/networking.dart';
+import 'package:clima_flutter/services/weather.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 
 class LoadingScreen extends StatefulWidget {
@@ -12,53 +16,28 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  final localPermission = Location();
-
-  getLocate() async {
-    await localPermission.getCurrentLocation();
-    print(
-      'Latitude: ${localPermission.latitude} Longitude: ${localPermission.longitude}',
-    );
-  }
-
-  Future<http.Response> getTempereture() {
-    print(localPermission.latitude);
-    // This function can be used to fetch temperature data based on the location.
-    return http.get(
-      Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?lat=${localPermission.latitude}&lon=${localPermission.longitude}&appid=ca5e7845b225f422f3c9ee9a6dc07913',
-      ),
+  getLocationData() async {
+    WeatherModel location = WeatherModel();
+    Map<String, dynamic> locationData = await location.getLocationWeather();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LocationScreen(locationData)),
     );
   }
 
   @override
   initState() {
     super.initState();
-    getLocate().then((_) {
-      getTempereture().then((response) {
-        if (response.statusCode == 200) {
-          final Map<String, dynamic> decodeResponse = jsonDecode(response.body);
-          print(decodeResponse['weather'][0]['id']);
-          print(decodeResponse['main']['temp']);
-          print(decodeResponse['name']); // Tempo
-        } else {
-          print('Sucesso na conexao${response.statusCode}');
-        }
-      });
-    });
+    getLocationData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            print(localPermission.latitude);
-          },
-          child: Text('Get Location'),
-        ),
-      ),
+      body: Center(child: SpinKitDoubleBounce(color: Colors.white, size: 60.0)),
     );
   }
 }
+// double temperature = data['main']['temp'];
+// int condition = data['weather'][0]['id'];
+// String cityName = data['name'];

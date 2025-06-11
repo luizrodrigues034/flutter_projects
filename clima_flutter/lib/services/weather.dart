@@ -1,16 +1,23 @@
-class Wheater {
-  final String cityName;
-  final double temperature;
-  final int condition;
+import 'dart:convert';
 
-  Wheater({
-    required this.cityName,
-    required this.temperature,
-    required this.condition,
-  });
-}
+import 'package:clima_flutter/services/location.dart';
+import 'package:clima_flutter/services/networking.dart';
+
+const apiKey = 'ca5e7845b225f422f3c9ee9a6dc07913';
+const openWeatherWeb = 'https://api.openweathermap.org/data/2.5/weather';
 
 class WeatherModel {
+  Future<Map<String, dynamic>> getLocationWeather() async {
+    final Location localPermission = Location();
+    await localPermission.getCurrentLocation();
+
+    print('Recebendo dados da api');
+    var data = await NetWorkHelper(
+      '$openWeatherWeb?lat=${localPermission.latitude}&lon=${localPermission.longitude}&appid=$apiKey&units=metric',
+    ).getData();
+    return data;
+  }
+
   String getWeatherIcon(int condition) {
     if (condition < 300) {
       return '🌩';
