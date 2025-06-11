@@ -19,7 +19,8 @@ class _ResultPageState extends State<ResultPage> {
     final int age = args.age;
     final int heigth = args.heigth;
     final int weight = args.weight;
-    final double resultado = (weight / heigth * heigth);
+    final double alturaMetros = heigth / 100;
+    final double resultado = weight / (alturaMetros * alturaMetros);
     String classificateBmi(double resultado) {
       if (resultado < 18.5) return 'Abaixo do peso';
       if (resultado < 25) return 'Peso normal';
