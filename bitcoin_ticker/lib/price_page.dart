@@ -1,6 +1,7 @@
 import 'package:bitcoin_ticker/card_coin.dart';
 import 'package:bitcoin_ticker/coin_data.dart';
 import 'package:bitcoin_ticker/service_coin.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PricePage extends StatefulWidget {
@@ -15,7 +16,6 @@ class _PricePageState extends State<PricePage> {
   double? precoLTC;
   String _moedaSelecionada = currenciesList[0];
   CoinService service = CoinService();
-
   @override
   initState() {
     super.initState();
@@ -57,19 +57,14 @@ class _PricePageState extends State<PricePage> {
                     color: Colors.red,
                     width: double.infinity,
                     child: Center(
-                      child: DropdownMenu<String>(
-                        dropdownMenuEntries: currenciesList.map((String opcao) {
-                          return DropdownMenuEntry(value: opcao, label: opcao);
-                        }).toList(),
-                        onSelected: (String? novoValor) {
-                          if (novoValor != null) {
-                            setCoinCountry(novoValor);
-                          }
+                      child: CupertinoPicker(
+                        itemExtent: 32,
+                        onSelectedItemChanged: (selectedIndex) {
+                          setCoinCountry(currenciesList[selectedIndex]);
                         },
-                        initialSelection: currenciesList[0],
-                        label: Text('Moeda'),
-                        enableSearch: true,
-                        menuHeight: 200,
+                        children: currenciesList.map((String value) {
+                          return Text(value);
+                        }).toList(),
                       ),
                     ),
                     //child:
@@ -80,3 +75,17 @@ class _PricePageState extends State<PricePage> {
     );
   }
 }
+//  child: DropdownMenu<String>(
+//                         dropdownMenuEntries: currenciesList.map((String opcao) {
+//                           return DropdownMenuEntry(value: opcao, label: opcao);
+//                         }).toList(),
+//                         onSelected: (String? novoValor) {
+//                           if (novoValor != null) {
+//                             setCoinCountry(novoValor);
+//                           }
+//                         },
+//                         initialSelection: currenciesList[0],
+//                         label: Text('Moeda'),
+//                         enableSearch: true,
+//                         menuHeight: 200,
+//                       )
